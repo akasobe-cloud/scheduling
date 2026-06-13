@@ -2,13 +2,21 @@
 
 import { addDays, format, isSameDay, parseISO } from "date-fns";
 import { ja } from "date-fns/locale";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import type { AvailabilityResponse, BookResponse, TimeSlot } from "@/types";
 
 type Step = "datetime" | "form" | "confirm" | "success";
 
 export default function BookingPage() {
+  return (
+    <Suspense>
+      <BookingPageInner />
+    </Suspense>
+  );
+}
+
+function BookingPageInner() {
   const searchParams = useSearchParams();
   const source = searchParams.get("from") || "";
   const recruiter = searchParams.get("recruiter") || "";
@@ -381,3 +389,4 @@ export default function BookingPage() {
     </div>
   );
 }
+
