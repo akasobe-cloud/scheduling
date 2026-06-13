@@ -93,7 +93,6 @@ export async function POST(request: NextRequest) {
       const descriptionLines = [
         `求職者: ${seekerName}`,
         `メール: ${seekerEmail}`,
-        `担当CA: ${advisor.name}`,
         source ? `流入媒体: ${source}` : null,
         recruiter ? `スカウトアカウント: ${recruiter}` : null,
       ].filter(Boolean).join("\n");
