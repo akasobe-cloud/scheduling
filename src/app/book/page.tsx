@@ -91,7 +91,6 @@ function BookingPageInner() {
           seekerName,
           seekerEmail,
           seekerCompany,
-          seekerComment,
           startTime: selectedSlot.start,
           source,
           recruiter,
