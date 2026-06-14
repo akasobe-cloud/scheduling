@@ -174,6 +174,8 @@ export async function POST(request: NextRequest) {
       startTime: slotStart.toISOString(),
       endTime: slotEnd.toISOString(),
       zoomJoinUrl: zoom.joinUrl,
+      zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
+      zoomPassword: advisor.zoom_password || undefined,
     };
 
     return NextResponse.json(response);

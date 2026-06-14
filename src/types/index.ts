@@ -7,6 +7,8 @@ export type Advisor = {
   is_active: boolean;
   created_at: string;
   zoom_personal_link?: string | null;
+  zoom_meeting_id_personal?: string | null;
+  zoom_password?: string | null;
 };
 
 export type Booking = {
@@ -59,5 +61,7 @@ export type BookResponse = {
   startTime?: string;
   endTime?: string;
   zoomJoinUrl?: string;
+  zoomMeetingId?: string;
+  zoomPassword?: string;
   error?: string;
 };

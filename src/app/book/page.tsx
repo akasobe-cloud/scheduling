@@ -336,16 +336,22 @@ function BookingPageInner() {
               {bookingResult.zoomJoinUrl && (
                 <div className="flex items-start gap-3 border-b border-gray-100 pb-4">
                   <span className="text-gray-400 mt-0.5">📹</span>
-                  <div>
+                  <div className="space-y-1">
                     <p className="font-medium">Zoom</p>
                     <a
                       href={bookingResult.zoomJoinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline break-all"
+                      className="text-blue-600 hover:underline break-all block"
                     >
                       {bookingResult.zoomJoinUrl}
                     </a>
+                    {bookingResult.zoomMeetingId && (
+                      <p className="text-sm text-gray-600">ID: {bookingResult.zoomMeetingId}</p>
+                    )}
+                    {bookingResult.zoomPassword && (
+                      <p className="text-sm text-gray-600">パスコード: {bookingResult.zoomPassword}</p>
+                    )}
                   </div>
                 </div>
               )}
