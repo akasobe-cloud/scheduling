@@ -76,17 +76,12 @@ export async function POST(request: NextRequest) {
 
     const advisor = await assignAdvisorForSlot(slotStart, slotEnd, busyTimes);
 
-    let zoom = { meetingId: "", joinUrl: "", startUrl: "" };
-    try {
-      zoom = await createZoomMeeting({
-        topic: `キャリア面談: ${seekerName}様 × ${advisor.name}`,
-        startTime: slotStart,
-        durationMinutes: DURATION_MINUTES,
-        agenda: `求職者: ${seekerName} (${seekerEmail})\n担当CA: ${advisor.name}`,
-      });
-    } catch (e) {
-      console.warn("Zoom meeting creation skipped:", e);
-    }
+    // CAの個人ZoomリンクをDBから取得
+    const zoom = {
+      meetingId: "",
+      joinUrl: (advisor as any).zoom_personal_link || "",
+      startUrl: "",
+    };
 
     let googleEventId = "";
     try {
