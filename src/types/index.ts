@@ -6,6 +6,7 @@ export type Advisor = {
   sort_order: number;
   is_active: boolean;
   created_at: string;
+  zoom_personal_link?: string | null;
 };
 
 export type Booking = {

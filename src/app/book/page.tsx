@@ -34,7 +34,6 @@ function BookingPageInner() {
   const [seekerName, setSeekerName] = useState("");
   const [seekerEmail, setSeekerEmail] = useState("");
   const [seekerCompany, setSeekerCompany] = useState("");
-  const [seekerComment, setSeekerComment] = useState("");
 
   const [bookingResult, setBookingResult] = useState<BookResponse | null>(null);
 

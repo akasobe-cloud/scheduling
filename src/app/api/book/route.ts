@@ -12,8 +12,7 @@ import {
 } from "@/lib/gmail";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { assignAdvisorForSlot, getActiveAdvisors } from "@/lib/round-robin";
-import { createZoomMeeting } from "@/lib/zoom";
-import type { BookRequest, BookResponse } from "@/types";
+import type { BookResponse } from "@/types";
 
 const DURATION_MINUTES = Number(process.env.APPOINTMENT_DURATION_MINUTES || 60);
 
@@ -79,7 +78,7 @@ export async function POST(request: NextRequest) {
     // CAの個人ZoomリンクをDBから取得
     const zoom = {
       meetingId: "",
-      joinUrl: (advisor as any).zoom_personal_link || "",
+      joinUrl: advisor.zoom_personal_link || "",
       startUrl: "",
     };
 
