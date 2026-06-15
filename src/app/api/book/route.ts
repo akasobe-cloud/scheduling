@@ -138,6 +138,8 @@ export async function POST(request: NextRequest) {
         advisorName: advisor.name,
         dateTime: dateTimeStr,
         zoomJoinUrl: zoom.joinUrl,
+        zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
+        zoomPassword: advisor.zoom_password || undefined,
         durationMinutes: DURATION_MINUTES,
       });
 
@@ -145,10 +147,16 @@ export async function POST(request: NextRequest) {
         recipientName: advisor.name,
         isAdvisor: true,
         seekerName,
+        seekerEmail,
+        seekerCompany: body.seekerCompany || undefined,
         advisorName: advisor.name,
         dateTime: dateTimeStr,
         zoomJoinUrl: zoom.joinUrl,
+        zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
+        zoomPassword: advisor.zoom_password || undefined,
         durationMinutes: DURATION_MINUTES,
+        source: source || undefined,
+        recruiter: recruiter || undefined,
       });
 
       await Promise.all([
