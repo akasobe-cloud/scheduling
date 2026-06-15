@@ -141,6 +141,7 @@ export async function POST(request: NextRequest) {
         zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
         zoomPassword: advisor.zoom_password || undefined,
         durationMinutes: DURATION_MINUTES,
+        bookingId: booking.id,
       });
 
       const advisorEmailContent = buildConfirmationEmail({

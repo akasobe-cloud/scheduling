@@ -68,7 +68,10 @@ export function buildConfirmationEmail(params: {
   durationMinutes: number;
   source?: string;
   recruiter?: string;
+  bookingId?: string;
 }): { subject: string; html: string } {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://scheduling-cs.vercel.app";
+
   if (params.isAdvisor) {
     const subject = `【予約確定】${params.seekerName}様との面談 - ${params.dateTime}【Liquet】`;
     const html = `
@@ -126,6 +129,11 @@ export function buildConfirmationEmail(params: {
   アンケートURL：<a href="https://forms.gle/AhvhSZCdvAKDxGde6">https://forms.gle/AhvhSZCdvAKDxGde6</a></p>
   <p>お手数をおかけいたしますが、よろしくお願いいたします。<br>
   ご不明な点がございましたら、いつでもお気軽にご連絡ください。</p>
+  ${params.bookingId ? `
+  <div style="margin: 30px 0; display: flex; gap: 12px;">
+    <a href="${baseUrl}/cancel?id=${params.bookingId}" style="display: inline-block; background: #e53e3e; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">予約をキャンセルする</a>
+    <a href="${baseUrl}/book" style="display: inline-block; background: #3182ce; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-left: 12px;">日程を変更する</a>
+  </div>` : ""}
   <p style="color: #666; font-size: 14px;">※このメールは送信専用です。ご返信いただいてもお答えできません。</p>
   <p style="color: #666; font-size: 14px;">※ 前日にリマインドメールをお送りします。</p>
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
@@ -134,6 +142,33 @@ export function buildConfirmationEmail(params: {
 </html>`;
     return { subject, html };
   }
+}
+
+export function buildCancelEmail(params: {
+  advisorName: string;
+  seekerName: string;
+  seekerEmail: string;
+  dateTime: string;
+}): { subject: string; html: string } {
+  const subject = `【キャンセル】${params.seekerName}様との面談がキャンセルされました【Liquet】`;
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+  <h2>面談がキャンセルされました</h2>
+  <p>${params.advisorName} 様</p>
+  <p>${params.seekerName}さんから予定のキャンセルがありました。</p>
+  <table style="border-collapse: collapse; margin: 20px 0; width: 100%;">
+    <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">予定日時</td><td style="padding: 10px;">${params.dateTime}</td></tr>
+    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName}</td></tr>
+    <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">メールアドレス</td><td style="padding: 10px;"><a href="mailto:${params.seekerEmail}">${params.seekerEmail}</a></td></tr>
+  </table>
+  <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+  <p style="color: #999; font-size: 12px;">Liquet</p>
+</body>
+</html>`;
+  return { subject, html };
 }
 
 export function buildReminderEmail(params: {
