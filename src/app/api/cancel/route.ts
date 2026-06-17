@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
         to: advisor.email,
         subject: cancelEmail.subject,
         htmlBody: cancelEmail.html,
+        cc: process.env.GMAIL_SENDER_EMAIL,
       });
     } catch (e) {
       console.warn("Cancel email skipped:", e);

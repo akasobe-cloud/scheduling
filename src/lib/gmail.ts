@@ -32,19 +32,21 @@ export async function sendEmail(params: {
   to: string;
   subject: string;
   htmlBody: string;
+  cc?: string;
 }): Promise<void> {
   const senderEmail = getGmailSenderEmail()!;
   const gmail = getGmailClient();
 
-  const message = [
+  const headers = [
     `From: ${senderEmail}`,
     `To: ${params.to}`,
+    ...(params.cc ? [`Cc: ${params.cc}`] : []),
     `Subject: =?UTF-8?B?${Buffer.from(params.subject).toString("base64")}?=`,
     "MIME-Version: 1.0",
     "Content-Type: text/html; charset=UTF-8",
-    "",
-    params.htmlBody,
-  ].join("\r\n");
+  ];
+
+  const message = [...headers, "", params.htmlBody].join("\r\n");
 
   await gmail.users.messages.send({
     userId: "me",

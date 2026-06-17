@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const advisor = await assignAdvisorForSlot(slotStart, slotEnd, busyTimes);
+    const advisor = await assignAdvisorForSlot(slotStart, slotEnd, busyTimes, recruiter || undefined);
 
     // CAの個人ZoomリンクをDBから取得
     const zoom = {
@@ -215,6 +215,7 @@ export async function POST(request: NextRequest) {
           to: advisor.email,
           subject: advisorEmailContent.subject,
           htmlBody: advisorEmailContent.html,
+          cc: process.env.GMAIL_SENDER_EMAIL,
         }),
       ]);
     } catch (e) {

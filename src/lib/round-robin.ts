@@ -45,7 +45,8 @@ export async function assignNextAdvisor(): Promise<Advisor> {
 export async function assignAdvisorForSlot(
   slotStart: Date,
   slotEnd: Date,
-  busyTimes: Map<string, { start: Date; end: Date }[]>
+  busyTimes: Map<string, { start: Date; end: Date }[]>,
+  preferredRecruiter?: string
 ): Promise<Advisor> {
   const supabase = getSupabaseAdmin();
   const advisors = await getActiveAdvisors();
@@ -85,6 +86,15 @@ export async function assignAdvisorForSlot(
 
   if (availableAdvisors.length === 0) {
     throw new Error("No available advisor for this time slot");
+  }
+
+  // recruiterパラメータと一致するCAが空いていれば優先
+  if (preferredRecruiter) {
+    const preferred = availableAdvisors.find(
+      (a) => a.email.split("@")[0].toLowerCase() === preferredRecruiter.toLowerCase()
+        || a.name === preferredRecruiter
+    );
+    if (preferred) return preferred;
   }
 
   availableAdvisors.sort((a, b) => (countMap.get(a.id) ?? 0) - (countMap.get(b.id) ?? 0));
