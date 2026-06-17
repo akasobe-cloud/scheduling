@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { addMinutes, parseISO } from "date-fns";
 import {
   createCalendarEvent,
+  deleteCalendarEvent,
   formatDateTimeJa,
   getBusyTimes,
   isSlotAvailableForAnyAdvisor,
@@ -135,11 +136,24 @@ export async function POST(request: NextRequest) {
     if (rescheduleId) {
       const { data: oldBooking } = await supabase
         .from("bookings")
-        .select("start_time")
+        .select("start_time, google_event_id, advisor_id, advisors(email, google_calendar_id)")
         .eq("id", rescheduleId)
         .single();
       if (oldBooking) {
         oldDateTime = formatDateTimeJa(new Date(oldBooking.start_time));
+        // 元のカレンダーイベントを削除
+        if (oldBooking.google_event_id && oldBooking.advisors) {
+          try {
+            const oldAdvisor = oldBooking.advisors as { email: string; google_calendar_id: string };
+            await deleteCalendarEvent({
+              calendarId: oldAdvisor.google_calendar_id,
+              eventId: oldBooking.google_event_id,
+              advisorEmail: oldAdvisor.email,
+            });
+          } catch (e) {
+            console.warn("Old calendar event deletion skipped:", e);
+          }
+        }
       }
       await supabase
         .from("bookings")

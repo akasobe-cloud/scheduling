@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { buildCancelEmail, sendEmail } from "@/lib/gmail";
-import { formatDateTimeJa } from "@/lib/google-calendar";
+import { deleteCalendarEvent, formatDateTimeJa } from "@/lib/google-calendar";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,6 +31,19 @@ export async function POST(request: NextRequest) {
 
     const dateTimeStr = formatDateTimeJa(new Date(booking.start_time));
     const advisor = booking.advisors;
+
+    // カレンダーイベント削除
+    if (booking.google_event_id) {
+      try {
+        await deleteCalendarEvent({
+          calendarId: advisor.google_calendar_id,
+          eventId: booking.google_event_id,
+          advisorEmail: advisor.email,
+        });
+      } catch (e) {
+        console.warn("Calendar event deletion skipped:", e);
+      }
+    }
 
     try {
       const cancelEmail = buildCancelEmail({

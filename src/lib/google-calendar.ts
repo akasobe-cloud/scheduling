@@ -176,6 +176,27 @@ export async function createCalendarEvent(params: {
   return event.data.id || "";
 }
 
+export async function deleteCalendarEvent(params: {
+  calendarId: string;
+  eventId: string;
+  advisorEmail: string;
+}): Promise<void> {
+  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = getGooglePrivateKey();
+  const auth = new google.auth.JWT({
+    email: clientEmail,
+    key: privateKey,
+    scopes: ["https://www.googleapis.com/auth/calendar"],
+    subject: params.advisorEmail,
+  });
+  const calendar = google.calendar({ version: "v3", auth });
+
+  await calendar.events.delete({
+    calendarId: params.calendarId,
+    eventId: params.eventId,
+  });
+}
+
 export function formatDateTimeJa(date: Date): string {
   const zoned = toZonedTime(date, TIMEZONE);
   return format(zoned, "yyyy年M月d日(E) HH:mm", { locale: ja });
