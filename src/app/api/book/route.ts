@@ -8,6 +8,7 @@ import {
 } from "@/lib/google-calendar";
 import {
   buildConfirmationEmail,
+  buildRescheduleEmailForAdvisor,
   sendEmail,
 } from "@/lib/gmail";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -19,7 +20,7 @@ const DURATION_MINUTES = Number(process.env.APPOINTMENT_DURATION_MINUTES || 60);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { seekerName, seekerEmail, startTime, source, recruiter } = body;
+    const { seekerName, seekerEmail, startTime, source, recruiter, rescheduleId } = body;
 
     if (!seekerName?.trim() || !seekerEmail?.trim() || !startTime) {
       return NextResponse.json(
@@ -99,6 +100,7 @@ export async function POST(request: NextRequest) {
         endTime: slotEnd,
         attendeeEmails: [seekerEmail, advisor.email],
         zoomJoinUrl: zoom.joinUrl,
+        advisorEmail: advisor.email,
       });
     } catch (e) {
       console.warn("Google Calendar event creation skipped:", e);
@@ -128,6 +130,23 @@ export async function POST(request: NextRequest) {
       throw new Error(`Failed to save booking: ${bookingError.message}`);
     }
 
+    // リスケの場合は元の予約をキャンセルして元の日時を取得
+    let oldDateTime = "";
+    if (rescheduleId) {
+      const { data: oldBooking } = await supabase
+        .from("bookings")
+        .select("start_time")
+        .eq("id", rescheduleId)
+        .single();
+      if (oldBooking) {
+        oldDateTime = formatDateTimeJa(new Date(oldBooking.start_time));
+      }
+      await supabase
+        .from("bookings")
+        .update({ status: "cancelled" })
+        .eq("id", rescheduleId);
+    }
+
     const dateTimeStr = formatDateTimeJa(slotStart);
 
     try {
@@ -144,21 +163,33 @@ export async function POST(request: NextRequest) {
         bookingId: booking.id,
       });
 
-      const advisorEmailContent = buildConfirmationEmail({
-        recipientName: advisor.name,
-        isAdvisor: true,
-        seekerName,
-        seekerEmail,
-        seekerCompany: body.seekerCompany || undefined,
-        advisorName: advisor.name,
-        dateTime: dateTimeStr,
-        zoomJoinUrl: zoom.joinUrl,
-        zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
-        zoomPassword: advisor.zoom_password || undefined,
-        durationMinutes: DURATION_MINUTES,
-        source: source || undefined,
-        recruiter: recruiter || undefined,
-      });
+      const advisorEmailContent = rescheduleId
+        ? buildRescheduleEmailForAdvisor({
+            advisorName: advisor.name,
+            seekerName,
+            seekerEmail,
+            seekerCompany: body.seekerCompany || undefined,
+            newDateTime: dateTimeStr,
+            oldDateTime,
+            zoomJoinUrl: zoom.joinUrl,
+            zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
+            zoomPassword: advisor.zoom_password || undefined,
+          })
+        : buildConfirmationEmail({
+            recipientName: advisor.name,
+            isAdvisor: true,
+            seekerName,
+            seekerEmail,
+            seekerCompany: body.seekerCompany || undefined,
+            advisorName: advisor.name,
+            dateTime: dateTimeStr,
+            zoomJoinUrl: zoom.joinUrl,
+            zoomMeetingId: advisor.zoom_meeting_id_personal || undefined,
+            zoomPassword: advisor.zoom_password || undefined,
+            durationMinutes: DURATION_MINUTES,
+            source: source || undefined,
+            recruiter: recruiter || undefined,
+          });
 
       await Promise.all([
         sendEmail({

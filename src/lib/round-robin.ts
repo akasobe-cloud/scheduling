@@ -54,11 +54,17 @@ export async function assignAdvisorForSlot(
     throw new Error("No active advisors available");
   }
 
-  // 各CAの確定済み面談数を取得
+  // 今月の確定済み面談数を取得
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
+
   const { data: bookingCounts } = await supabase
     .from("bookings")
     .select("advisor_id")
-    .eq("status", "confirmed");
+    .eq("status", "confirmed")
+    .gte("start_time", monthStart)
+    .lt("start_time", monthEnd);
 
   const countMap = new Map<string, number>();
   for (const advisor of advisors) {

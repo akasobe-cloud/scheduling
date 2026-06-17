@@ -20,6 +20,7 @@ function BookingPageInner() {
   const searchParams = useSearchParams();
   const source = searchParams.get("from") || "";
   const recruiter = searchParams.get("recruiter") || "";
+  const rescheduleId = searchParams.get("reschedule") || "";
   const [step, setStep] = useState<Step>("datetime");
   const [selectedDate, setSelectedDate] = useState<string>(
     format(new Date(), "yyyy-MM-dd")
@@ -94,6 +95,7 @@ function BookingPageInner() {
           startTime: selectedSlot.start,
           source,
           recruiter,
+          rescheduleId: rescheduleId || undefined,
         }),
       });
 
@@ -353,6 +355,23 @@ function BookingPageInner() {
                       <p className="text-sm text-gray-600">パスコード: {bookingResult.zoomPassword}</p>
                     )}
                   </div>
+                </div>
+              )}
+
+              {bookingResult.bookingId && (
+                <div className="flex gap-3 border-b border-gray-100 pb-4">
+                  <a
+                    href={`/cancel?id=${bookingResult.bookingId}`}
+                    className="flex-1 rounded-lg border border-red-300 bg-red-50 px-4 py-2.5 text-center text-sm font-medium text-red-700 hover:bg-red-100"
+                  >
+                    予約をキャンセルする
+                  </a>
+                  <a
+                    href={`/book?reschedule=${bookingResult.bookingId}`}
+                    className="flex-1 rounded-lg border border-blue-300 bg-blue-50 px-4 py-2.5 text-center text-sm font-medium text-blue-700 hover:bg-blue-100"
+                  >
+                    日程を変更する
+                  </a>
                 </div>
               )}
 

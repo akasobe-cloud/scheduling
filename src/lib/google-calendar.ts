@@ -132,8 +132,17 @@ export async function createCalendarEvent(params: {
   endTime: Date;
   attendeeEmails: string[];
   zoomJoinUrl?: string;
+  advisorEmail?: string;
 }): Promise<string> {
-  const calendar = getCalendarClient();
+  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = getGooglePrivateKey();
+  const auth = new google.auth.JWT({
+    email: clientEmail,
+    key: privateKey,
+    scopes: ["https://www.googleapis.com/auth/calendar"],
+    subject: params.advisorEmail, // CAになりすまして書き込む
+  });
+  const calendar = google.calendar({ version: "v3", auth });
 
   const description = params.zoomJoinUrl
     ? `${params.description}\n\nZoom: ${params.zoomJoinUrl}`

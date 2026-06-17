@@ -132,7 +132,7 @@ export function buildConfirmationEmail(params: {
   ${params.bookingId ? `
   <div style="margin: 30px 0; display: flex; gap: 12px;">
     <a href="${baseUrl}/cancel?id=${params.bookingId}" style="display: inline-block; background: #e53e3e; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">予約をキャンセルする</a>
-    <a href="${baseUrl}/book" style="display: inline-block; background: #3182ce; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-left: 12px;">日程を変更する</a>
+    <a href="${baseUrl}/book?reschedule=${params.bookingId}" style="display: inline-block; background: #3182ce; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-left: 12px;">日程を変更する</a>
   </div>` : ""}
   <p style="color: #666; font-size: 14px;">※このメールは送信専用です。ご返信いただいてもお答えできません。</p>
   <p style="color: #666; font-size: 14px;">※ 前日にリマインドメールをお送りします。</p>
@@ -142,6 +142,46 @@ export function buildConfirmationEmail(params: {
 </html>`;
     return { subject, html };
   }
+}
+
+export function buildRescheduleEmailForAdvisor(params: {
+  advisorName: string;
+  seekerName: string;
+  seekerEmail: string;
+  seekerCompany?: string;
+  newDateTime: string;
+  oldDateTime: string;
+  zoomJoinUrl: string;
+  zoomMeetingId?: string;
+  zoomPassword?: string;
+}): { subject: string; html: string } {
+  const subject = `【日程変更】${params.seekerName}様との面談が変更されました【Liquet】`;
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+  <h2>面談の日程が変更されました</h2>
+  <p>${params.advisorName} 様</p>
+  <p>${params.seekerName}さんから日程変更がありました。</p>
+  <table style="border-collapse: collapse; margin: 20px 0; width: 100%;">
+    <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">変更後の日時</td><td style="padding: 10px;">${params.newDateTime}</td></tr>
+    <tr><td style="padding: 10px; font-weight: bold;">Web会議室</td><td style="padding: 10px;"><a href="${params.zoomJoinUrl}">${params.zoomJoinUrl}</a></td></tr>
+    ${params.zoomMeetingId ? `<tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">ミーティングID</td><td style="padding: 10px;">${params.zoomMeetingId}</td></tr>` : ""}
+    ${params.zoomPassword ? `<tr><td style="padding: 10px; font-weight: bold;">パスワード</td><td style="padding: 10px;">${params.zoomPassword}</td></tr>` : ""}
+    <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">変更前の日時</td><td style="padding: 10px;">${params.oldDateTime}</td></tr>
+  </table>
+  <table style="border-collapse: collapse; margin: 20px 0; width: 100%; border-top: 2px solid #eee;">
+    <tr><td colspan="2" style="padding: 10px; font-weight: bold; font-size: 16px;">入力情報</td></tr>
+    ${params.seekerCompany ? `<tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">会社名</td><td style="padding: 10px;">${params.seekerCompany}</td></tr>` : ""}
+    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName}</td></tr>
+    <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">メールアドレス</td><td style="padding: 10px;"><a href="mailto:${params.seekerEmail}">${params.seekerEmail}</a></td></tr>
+  </table>
+  <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+  <p style="color: #999; font-size: 12px;">Liquet</p>
+</body>
+</html>`;
+  return { subject, html };
 }
 
 export function buildCancelEmail(params: {
