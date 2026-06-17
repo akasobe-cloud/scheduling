@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
       googleEventId = await createCalendarEvent({
         calendarId: advisor.google_calendar_id,
-        summary: `初回面談: ${seekerName}様`,
+        summary: `初回面談: ${seekerName} 様`,
         description: descriptionLines,
         startTime: slotStart,
         endTime: slotEnd,
