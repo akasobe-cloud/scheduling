@@ -88,11 +88,19 @@ export async function assignAdvisorForSlot(
     throw new Error("No available advisor for this time slot");
   }
 
+  // recruiterパラメータと担当CAの対応表
+  const recruiterMap: Record<string, string> = {
+    "lu": "tateishi",       // 呂アカウント → 立石
+    "shinohara": "watanabe.t", // 篠原アカウント → 渡邉
+    "akasobe": "kagawa",    // 赤曽部アカウント → 香川
+  };
+
   // recruiterパラメータと一致するCAが空いていれば優先
   if (preferredRecruiter) {
+    const mappedEmail = recruiterMap[preferredRecruiter.toLowerCase()];
+    const lookupKey = mappedEmail || preferredRecruiter.toLowerCase();
     const preferred = availableAdvisors.find(
-      (a) => a.email.split("@")[0].toLowerCase() === preferredRecruiter.toLowerCase()
-        || a.name === preferredRecruiter
+      (a) => a.email.split("@")[0].toLowerCase() === lookupKey
     );
     if (preferred) return preferred;
   }
