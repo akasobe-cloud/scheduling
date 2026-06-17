@@ -93,7 +93,7 @@ export function buildConfirmationEmail(params: {
   <table style="border-collapse: collapse; margin: 20px 0; width: 100%; border-top: 2px solid #eee;">
     <tr><td colspan="2" style="padding: 10px; font-weight: bold; font-size: 16px;">入力情報</td></tr>
     ${params.seekerCompany ? `<tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">会社名</td><td style="padding: 10px;">${params.seekerCompany}</td></tr>` : ""}
-    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName}</td></tr>
+    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName} 様</td></tr>
     <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">メールアドレス</td><td style="padding: 10px;"><a href="mailto:${params.seekerEmail}">${params.seekerEmail}</a></td></tr>
     ${params.source ? `<tr><td style="padding: 10px; font-weight: bold;">流入媒体</td><td style="padding: 10px;">${params.source}</td></tr>` : ""}
     ${params.recruiter ? `<tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">スカウトアカウント</td><td style="padding: 10px;">${params.recruiter}</td></tr>` : ""}
@@ -176,7 +176,7 @@ export function buildRescheduleEmailForAdvisor(params: {
   <table style="border-collapse: collapse; margin: 20px 0; width: 100%; border-top: 2px solid #eee;">
     <tr><td colspan="2" style="padding: 10px; font-weight: bold; font-size: 16px;">入力情報</td></tr>
     ${params.seekerCompany ? `<tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">会社名</td><td style="padding: 10px;">${params.seekerCompany}</td></tr>` : ""}
-    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName}</td></tr>
+    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName} 様</td></tr>
     <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">メールアドレス</td><td style="padding: 10px;"><a href="mailto:${params.seekerEmail}">${params.seekerEmail}</a></td></tr>
   </table>
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
@@ -203,7 +203,7 @@ export function buildCancelEmail(params: {
   <p>${params.seekerName}さんから予定のキャンセルがありました。</p>
   <table style="border-collapse: collapse; margin: 20px 0; width: 100%;">
     <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold; width: 140px;">予定日時</td><td style="padding: 10px;">${params.dateTime}</td></tr>
-    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName}</td></tr>
+    <tr><td style="padding: 10px; font-weight: bold;">名前</td><td style="padding: 10px;">${params.seekerName} 様</td></tr>
     <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">メールアドレス</td><td style="padding: 10px;"><a href="mailto:${params.seekerEmail}">${params.seekerEmail}</a></td></tr>
   </table>
   <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">

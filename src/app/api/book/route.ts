@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     let googleEventId = "";
     try {
       const descriptionLines = [
-        `求職者: ${seekerName}`,
+        `求職者: ${seekerName} 様`,
         `メール: ${seekerEmail}`,
         source ? `流入媒体: ${source}` : null,
         recruiter ? `スカウトアカウント: ${recruiter}` : null,
