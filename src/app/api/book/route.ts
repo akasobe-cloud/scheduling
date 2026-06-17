@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
         // 元のカレンダーイベントを削除
         if (oldBooking.google_event_id && oldBooking.advisors) {
           try {
-            const oldAdvisor = oldBooking.advisors as { email: string; google_calendar_id: string };
+            const oldAdvisor = oldBooking.advisors as unknown as { email: string; google_calendar_id: string };
             await deleteCalendarEvent({
               calendarId: oldAdvisor.google_calendar_id,
               eventId: oldBooking.google_event_id,
